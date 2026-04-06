@@ -1,1 +1,1687 @@
+<!DOCTYPE html>
 
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mi Rutina">
+<meta name="theme-color" content="#0f0f0f">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230f0f0f'/><text y='.9em' font-size='80'>💪</text></svg>">
+<link rel="manifest" id="manifestPlaceholder">
+<script>
+  // Inline manifest for PWA
+  const manifest = {
+    name: "Mi Rutina Diaria",
+    short_name: "Mi Rutina",
+    description: "Tu plan completo de salud y gym",
+    start_url: ".",
+    display: "standalone",
+    background_color: "#0f0f0f",
+    theme_color: "#0f0f0f",
+    orientation: "portrait",
+    icons: [{
+      src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230f0f0f'/><text y='.9em' font-size='80'>💪</text></svg>",
+      sizes: "192x192",
+      type: "image/svg+xml"
+    }]
+  };
+  const blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  document.getElementById('manifestPlaceholder').setAttribute('href', url);
+</script>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi Rutina Diaria</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --surface2: #222222;
+    --border: #2e2e2e;
+    --accent: #e8512a;
+    --accent2: #f0a500;
+    --green: #2ecc71;
+    --text: #f0ede8;
+    --muted: #888;
+  }
+
+- { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+background: var(–bg);
+color: var(–text);
+font-family: ‘DM Sans’, sans-serif;
+min-height: 100vh;
+padding: 0 0 80px 0;
+}
+
+/* HEADER */
+.header {
+background: linear-gradient(135deg, #1a0a00 0%, #0f0f0f 60%);
+border-bottom: 1px solid var(–border);
+padding: 24px 20px 20px;
+position: sticky;
+top: 0;
+z-index: 100;
+}
+
+.header-top {
+display: flex;
+justify-content: space-between;
+align-items: flex-start;
+margin-bottom: 16px;
+}
+
+.header h1 {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 2.2rem;
+letter-spacing: 2px;
+color: var(–accent);
+line-height: 1;
+}
+
+.header .date {
+font-size: 0.75rem;
+color: var(–muted);
+text-transform: uppercase;
+letter-spacing: 1px;
+margin-top: 4px;
+}
+
+.reset-btn {
+background: transparent;
+border: 1px solid var(–border);
+color: var(–muted);
+padding: 6px 12px;
+border-radius: 6px;
+font-size: 0.75rem;
+cursor: pointer;
+font-family: ‘DM Sans’, sans-serif;
+transition: all 0.2s;
+}
+.reset-btn:hover { border-color: var(–accent); color: var(–accent); }
+
+/* PROGRESS BAR */
+.progress-wrap {
+background: var(–border);
+border-radius: 100px;
+height: 6px;
+overflow: hidden;
+}
+.progress-bar {
+height: 100%;
+background: linear-gradient(90deg, var(–accent), var(–accent2));
+border-radius: 100px;
+transition: width 0.4s ease;
+}
+.progress-label {
+display: flex;
+justify-content: space-between;
+font-size: 0.72rem;
+color: var(–muted);
+margin-bottom: 6px;
+}
+
+/* TABS */
+.tabs {
+display: flex;
+gap: 6px;
+padding: 14px 20px 0;
+overflow-x: auto;
+scrollbar-width: none;
+}
+.tabs::-webkit-scrollbar { display: none; }
+
+.tab {
+background: var(–surface);
+border: 1px solid var(–border);
+color: var(–muted);
+padding: 8px 16px;
+border-radius: 100px;
+font-size: 0.8rem;
+cursor: pointer;
+white-space: nowrap;
+transition: all 0.2s;
+font-family: ‘DM Sans’, sans-serif;
+font-weight: 500;
+}
+.tab.active {
+background: var(–accent);
+border-color: var(–accent);
+color: white;
+}
+
+/* SECTIONS */
+.section {
+display: none;
+padding: 16px 20px;
+animation: fadeIn 0.2s ease;
+}
+.section.active { display: block; }
+
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(6px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+.section-title {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 1.4rem;
+letter-spacing: 2px;
+color: var(–accent2);
+margin-bottom: 14px;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+/* CARDS */
+.card {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 14px;
+padding: 16px;
+margin-bottom: 10px;
+transition: border-color 0.2s;
+}
+.card.completed {
+border-color: var(–green);
+background: #0d1f15;
+}
+
+.card-row {
+display: flex;
+align-items: center;
+gap: 14px;
+}
+
+.check-btn {
+width: 28px;
+height: 28px;
+border-radius: 50%;
+border: 2px solid var(–border);
+background: transparent;
+cursor: pointer;
+flex-shrink: 0;
+display: flex;
+align-items: center;
+justify-content: center;
+transition: all 0.2s;
+font-size: 0.9rem;
+}
+.check-btn:hover { border-color: var(–green); }
+.card.completed .check-btn {
+background: var(–green);
+border-color: var(–green);
+}
+
+.card-content { flex: 1; }
+.card-title {
+font-weight: 600;
+font-size: 0.95rem;
+margin-bottom: 2px;
+}
+.card.completed .card-title {
+text-decoration: line-through;
+color: var(–muted);
+}
+.card-sub {
+font-size: 0.78rem;
+color: var(–muted);
+line-height: 1.4;
+}
+
+.card-badge {
+font-size: 0.7rem;
+padding: 3px 10px;
+border-radius: 100px;
+font-weight: 600;
+text-transform: uppercase;
+letter-spacing: 0.5px;
+flex-shrink: 0;
+}
+.badge-red { background: #3a1010; color: #ff6b6b; }
+.badge-yellow { background: #2a2000; color: var(–accent2); }
+.badge-green { background: #0d2a1a; color: var(–green); }
+.badge-blue { background: #0d1a2a; color: #74b9ff; }
+
+/* WATER TRACKER */
+.water-section {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 14px;
+padding: 16px;
+margin-bottom: 10px;
+}
+.water-title {
+font-weight: 600;
+margin-bottom: 12px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+.water-count {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 1.4rem;
+color: #74b9ff;
+}
+.water-glasses {
+display: flex;
+gap: 8px;
+flex-wrap: wrap;
+}
+.glass {
+width: 44px;
+height: 44px;
+border-radius: 10px;
+border: 2px solid var(–border);
+background: transparent;
+cursor: pointer;
+font-size: 1.4rem;
+display: flex;
+align-items: center;
+justify-content: center;
+transition: all 0.2s;
+}
+.glass.filled {
+background: #0d1a2a;
+border-color: #74b9ff;
+}
+.glass:hover { transform: scale(1.05); }
+
+/* MEAL TRACKER */
+.meal-card {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 14px;
+padding: 16px;
+margin-bottom: 10px;
+}
+.meal-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 12px;
+}
+.meal-title { font-weight: 600; font-size: 0.95rem; }
+.meal-time { font-size: 0.75rem; color: var(–muted); }
+.meal-items { display: flex; flex-direction: column; gap: 8px; }
+.meal-item {
+display: flex;
+align-items: center;
+gap: 10px;
+padding: 8px 12px;
+background: var(–surface2);
+border-radius: 8px;
+font-size: 0.85rem;
+}
+.meal-item.checked { background: #0d1f15; }
+.meal-item input[type=“checkbox”] {
+width: 16px;
+height: 16px;
+accent-color: var(–green);
+cursor: pointer;
+flex-shrink: 0;
+}
+.meal-item label { cursor: pointer; flex: 1; }
+.meal-item.checked label { text-decoration: line-through; color: var(–muted); }
+.meal-kcal { font-size: 0.72rem; color: var(–muted); }
+
+/* NOTES */
+.notes-area {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: 14px;
+padding: 16px;
+margin-bottom: 10px;
+}
+.notes-area textarea {
+width: 100%;
+background: var(–surface2);
+border: 1px solid var(–border);
+border-radius: 8px;
+color: var(–text);
+font-family: ‘DM Sans’, sans-serif;
+font-size: 0.85rem;
+padding: 10px;
+resize: none;
+height: 100px;
+outline: none;
+margin-top: 8px;
+}
+.notes-area textarea:focus { border-color: var(–accent); }
+
+/* DIVIDER */
+.divider {
+height: 1px;
+background: var(–border);
+margin: 16px 0;
+}
+
+/* STREAK */
+.streak-box {
+background: linear-gradient(135deg, #1a0a00, #0f0f0f);
+border: 1px solid var(–accent);
+border-radius: 14px;
+padding: 16px;
+margin-bottom: 10px;
+text-align: center;
+}
+.streak-num {
+font-family: ‘Bebas Neue’, sans-serif;
+font-size: 3rem;
+color: var(–accent);
+line-height: 1;
+}
+.streak-label { font-size: 0.75rem; color: var(–muted); text-transform: uppercase; letter-spacing: 1px; }
+
+/* BOTTOM NAV */
+.bottom-nav {
+position: fixed;
+bottom: 0;
+left: 0;
+right: 0;
+background: var(–surface);
+border-top: 1px solid var(–border);
+display: flex;
+padding: 10px 0;
+z-index: 100;
+}
+.nav-item {
+flex: 1;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 3px;
+cursor: pointer;
+padding: 4px;
+transition: color 0.2s;
+color: var(–muted);
+font-size: 0.65rem;
+font-weight: 500;
+text-transform: uppercase;
+letter-spacing: 0.5px;
+}
+.nav-item.active { color: var(–accent); }
+.nav-item .icon { font-size: 1.3rem; }
+
+.t-card { background: var(–surface); border: 1px solid var(–border); border-radius: 14px; padding: 20px; margin-bottom: 10px; text-align: center; }
+.t-phase { font-family: ‘Bebas Neue’, sans-serif; font-size: 2.4rem; letter-spacing: 3px; margin-bottom: 16px; }
+.t-circle-wrap { position: relative; width: 200px; height: 200px; margin: 0 auto 16px; }
+.t-svg { width: 200px; height: 200px; transform: rotate(-90deg); }
+.t-track { fill: none; stroke: #222; stroke-width: 12; }
+.t-prog { fill: none; stroke-width: 12; stroke-linecap: round; transition: stroke-dashoffset 0.1s linear; }
+.t-inner { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); }
+.t-secs { font-family: ‘Bebas Neue’, sans-serif; font-size: 4.5rem; line-height: 1; }
+.t-unit { font-size: 0.7rem; color: var(–muted); text-transform: uppercase; letter-spacing: 2px; }
+.t-round { color: var(–muted); font-size: 0.85rem; margin-bottom: 12px; }
+.t-round b { font-family: ‘Bebas Neue’, sans-serif; font-size: 1.3rem; color: var(–text); }
+.t-dots { display: flex; gap: 7px; flex-wrap: wrap; justify-content: center; margin-bottom: 18px; }
+.t-dot { width: 10px; height: 10px; border-radius: 50%; background: #222; border: 1px solid #333; transition: all 0.3s; }
+.t-dot.tw { background: #e8512a; border-color: #e8512a; }
+.t-dot.tr { background: #2ecc71; border-color: #2ecc71; }
+.t-dot.td { background: #333; border-color: #333; }
+.t-controls { display: flex; gap: 14px; align-items: center; justify-content: center; margin-bottom: 20px; }
+.t-main { width: 72px; height: 72px; border-radius: 50%; border: none; font-size: 1.6rem; cursor: pointer; transition: all 0.2s; color: white; }
+.t-main:active { transform: scale(0.95); }
+.t-sec { width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(–border); background: var(–surface2); color: var(–muted); font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.t-sec:hover { color: white; border-color: #555; }
+.t-settings { display: flex; gap: 10px; background: var(–surface2); border-radius: 12px; padding: 12px; }
+.t-set { flex: 1; text-align: center; }
+.t-slbl { font-size: 0.62rem; color: var(–muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+.t-srow { display: flex; align-items: center; justify-content: center; gap: 6px; }
+.t-sbtn { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(–border); background: transparent; color: var(–muted); font-size: 0.9rem; cursor: pointer; line-height: 1; }
+.t-sbtn:hover { color: white; }
+.t-snum { font-family: ‘Bebas Neue’, sans-serif; font-size: 1.3rem; min-width: 26px; }
+.t-win { display: none; background: linear-gradient(135deg,#1a0a00,#0f0f0f); border: 1px solid var(–accent); border-radius: 14px; padding: 24px; margin-bottom: 10px; text-align: center; }
+.t-win.show { display: block; }
+.t-win-title { font-family: ‘Bebas Neue’, sans-serif; font-size: 2.2rem; color: var(–accent); letter-spacing: 2px; }
+.t-win-sub { font-size: 0.8rem; color: var(–muted); margin: 8px 0 16px; }
+.t-win-btn { background: var(–accent); border: none; color: white; padding: 10px 24px; border-radius: 100px; font-family: ‘DM Sans’, sans-serif; font-weight: 600; cursor: pointer; font-size: 0.9rem; }
+
+.gym-day-btn {
+background: var(–surface); border: 1px solid var(–border); color: var(–muted);
+padding: 6px 12px; border-radius: 100px; font-size: 0.75rem; cursor: pointer;
+font-family: ‘DM Sans’, sans-serif; font-weight: 600; transition: all 0.2s;
+}
+.gym-day-btn.active { background: var(–accent); border-color: var(–accent); color: white; }
+.gym-day { display: none; }
+.gym-day.active { display: block; }
+.gym-day-title { font-family: ‘Bebas Neue’, sans-serif; font-size: 1.3rem; letter-spacing: 2px; color: var(–accent2); margin-bottom: 14px; }
+.gym-block-title { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(–muted); margin: 14px 0 8px; }
+.gym-ex { background: var(–surface); border: 1px solid var(–border); border-radius: 10px; padding: 12px 14px; margin-bottom: 6px; }
+.gym-ex.gym-superset { border-left: 3px solid var(–accent2); }
+.gym-ex-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 2px; }
+.gym-ex-detail { font-size: 0.78rem; color: var(–muted); }
+.gym-cardio { background: #0d1f15; border: 1px solid #2ecc71; border-radius: 10px; padding: 12px 14px; margin-top: 14px; font-size: 0.85rem; font-weight: 600; color: #2ecc71; }
+
+.granos-step { background: var(–surface); border: 1px solid var(–border); border-radius: 12px; padding: 14px 16px; margin-bottom: 8px; display: flex; gap: 14px; align-items: flex-start; }
+.granos-step-num { font-family: ‘Bebas Neue’, sans-serif; font-size: 1.6rem; color: var(–accent); line-height: 1; flex-shrink: 0; width: 28px; }
+.granos-step-content { flex: 1; }
+.granos-step-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 2px; }
+.granos-step-sub { font-size: 0.78rem; color: var(–muted); line-height: 1.4; }
+.granos-warning { background: #1a0a00; border: 1px solid var(–accent); border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; font-size: 0.82rem; color: #ff9f7f; }
+.granos-tip { background: #0d1f15; border: 1px solid var(–green); border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; font-size: 0.82rem; color: var(–green); }
+</style>
+
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <h1>MI RUTINA 💪</h1>
+      <div class="date" id="dateLabel"></div>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button class="reset-btn" onclick="shareApp()" id="shareBtn">📤 Compartir</button>
+      <button class="reset-btn" onclick="resetDay()">↺ Nuevo día</button>
+    </div>
+  </div>
+  <div class="progress-label">
+    <span>Progreso del día</span>
+    <span id="progressLabel">0%</span>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-bar" id="progressBar" style="width:0%"></div>
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('ejercicio', this)">🏋️ Ejercicio</div>
+  <div class="tab" onclick="switchTab('comidas', this)">🥩 Comidas</div>
+  <div class="tab" onclick="switchTab('suplementos', this)">💊 Suplementos</div>
+  <div class="tab" onclick="switchTab('skincare', this)">✨ Skincare</div>
+  <div class="tab" onclick="switchTab('hidratacion', this)">💧 Agua</div>
+  <div class="tab" onclick="switchTab('notas', this)">📝 Notas</div>
+  <div class="tab" onclick="switchTab('timer', this)">🪢 Timer</div>
+  <div class="tab" onclick="switchTab('gym', this)">🏋️ Gym</div>
+  <div class="tab" onclick="switchTab('granos', this)">🧴 Granos</div>
+</div>
+
+<!-- EJERCICIO -->
+
+<div class="section active" id="sec-ejercicio">
+  <div class="section-title">🏋️ Ejercicio</div>
+
+  <div class="section-title" style="font-size:1rem; color:var(--accent2); margin-top:0;">🌅 MAÑANA</div>
+
+  <div class="card" id="card-e1">
+    <div class="card-row">
+      <button class="check-btn" onclick="toggleCard('card-e1')"></button>
+      <div class="card-content">
+        <div class="card-title">Caminata</div>
+        <div class="card-sub">40-60 minutos a ritmo cómodo</div>
+      </div>
+      <span class="card-badge badge-green">MAÑANA</span>
+    </div>
+  </div>
+
+  <div class="card" id="card-e2">
+    <div class="card-row">
+      <button class="check-btn" onclick="toggleCard('card-e2')"></button>
+      <div class="card-content">
+        <div class="card-title">Agua mineral + limón + sal de mar</div>
+        <div class="card-sub">En ayunas, antes del café</div>
+      </div>
+      <span class="card-badge badge-blue">AYUNO</span>
+    </div>
+  </div>
+
+  <div class="card" id="card-e3">
+    <div class="card-row">
+      <button class="check-btn" onclick="toggleCard('card-e3')"></button>
+      <div class="card-content">
+        <div class="card-title">Café negro</div>
+        <div class="card-sub">90 minutos después de despertar</div>
+      </div>
+      <span class="card-badge badge-yellow">MAÑANA</span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="section-title" style="font-size:1rem; color:var(--accent2); margin-top:0;">🌆 TARDE — Elige uno</div>
+
+  <div class="card" id="card-e4">
+    <div class="card-row">
+      <button class="check-btn" onclick="toggleCard('card-e4')"></button>
+      <div class="card-content">
+        <div class="card-title">Opción A — Gym</div>
+        <div class="card-sub">Pesas 40 min + Escaladora 15 min</div>
+      </div>
+      <span class="card-badge badge-red">O</span>
+    </div>
+  </div>
+
+  <div class="card" id="card-e5">
+    <div class="card-row">
+      <button class="check-btn" onclick="toggleCard('card-e5')"></button>
+      <div class="card-content">
+        <div class="card-title">Opción B — HIIT Cuerda / Funcional / Lagree</div>
+        <div class="card-sub">45 minutos — no combinar con gym</div>
+      </div>
+      <span class="card-badge badge-yellow">O</span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="section-title" style="font-size:1rem; color:var(--muted); margin-top:0;">⚡ POST-EJERCICIO</div>
+
+  <div class="card" id="card-e6">
+    <div class="card-row">
+      <button class="check-btn" onclick="toggleCard('card-e6')"></button>
+      <div class="card-content">
+        <div class="card-title">Ducha máximo 30 min post-gym</div>
+        <div class="card-sub">CeraVe SA + esponja en nalgas y piernas</div>
+      </div>
+      <span class="card-badge badge-red">IMPORTANTE</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- COMIDAS -->
+
+<div class="section" id="sec-comidas">
+  <div class="section-title">🥩 Comidas</div>
+
+  <div class="meal-card">
+    <div class="meal-header">
+      <div class="meal-title">🍳 Comida 1</div>
+      <div class="meal-time">2:00 — 2:30 PM · ~1,050 kcal</div>
+    </div>
+    <div class="meal-items">
+      <div class="meal-item" id="m1-1">
+        <input type="checkbox" id="cb-m1-1" onchange="toggleMeal('m1-1')">
+        <label for="cb-m1-1">🥩 Carne molida 300g</label>
+        <span class="meal-kcal">~630 kcal</span>
+      </div>
+      <div class="meal-item" id="m1-2">
+        <input type="checkbox" id="cb-m1-2" onchange="toggleMeal('m1-2')">
+        <label for="cb-m1-2">🍳 4 huevos estrellados</label>
+        <span class="meal-kcal">~280 kcal</span>
+      </div>
+      <div class="meal-item" id="m1-3">
+        <input type="checkbox" id="cb-m1-3" onchange="toggleMeal('m1-3')">
+        <label for="cb-m1-3">🍠 1/4 papa o camote</label>
+        <span class="meal-kcal">~70 kcal</span>
+      </div>
+      <div class="meal-item" id="m1-4">
+        <input type="checkbox" id="cb-m1-4" onchange="toggleMeal('m1-4')">
+        <label for="cb-m1-4">🥑 1/4 aguacate</label>
+        <span class="meal-kcal">~80 kcal</span>
+      </div>
+      <div class="meal-item" id="m1-5">
+        <input type="checkbox" id="cb-m1-5" onchange="toggleMeal('m1-5')">
+        <label for="cb-m1-5">🍯 1/2 cdita miel orgánica</label>
+        <span class="meal-kcal">~30 kcal</span>
+      </div>
+      <div class="meal-item" id="m1-6">
+        <input type="checkbox" id="cb-m1-6" onchange="toggleMeal('m1-6')">
+        <label for="cb-m1-6">🍊 Fruta post comida</label>
+        <span class="meal-kcal">~60 kcal</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="meal-card">
+    <div class="meal-header">
+      <div class="meal-title">🥩 Comida 2</div>
+      <div class="meal-time">8:00 — 9:00 PM · ~1,050 kcal</div>
+    </div>
+    <div class="meal-items">
+      <div class="meal-item" id="m2-1">
+        <input type="checkbox" id="cb-m2-1" onchange="toggleMeal('m2-1')">
+        <label for="cb-m2-1">🥩 Carne molida 300g</label>
+        <span class="meal-kcal">~630 kcal</span>
+      </div>
+      <div class="meal-item" id="m2-2">
+        <input type="checkbox" id="cb-m2-2" onchange="toggleMeal('m2-2')">
+        <label for="cb-m2-2">🍳 4 huevos estrellados</label>
+        <span class="meal-kcal">~280 kcal</span>
+      </div>
+      <div class="meal-item" id="m2-3">
+        <input type="checkbox" id="cb-m2-3" onchange="toggleMeal('m2-3')">
+        <label for="cb-m2-3">🍠 1/4 papa o camote</label>
+        <span class="meal-kcal">~70 kcal</span>
+      </div>
+      <div class="meal-item" id="m2-4">
+        <input type="checkbox" id="cb-m2-4" onchange="toggleMeal('m2-4')">
+        <label for="cb-m2-4">🥑 1/4 aguacate</label>
+        <span class="meal-kcal">~80 kcal</span>
+      </div>
+      <div class="meal-item" id="m2-5">
+        <input type="checkbox" id="cb-m2-5" onchange="toggleMeal('m2-5')">
+        <label for="cb-m2-5">🍯 1/2 cdita miel orgánica</label>
+        <span class="meal-kcal">~30 kcal</span>
+      </div>
+      <div class="meal-item" id="m2-6">
+        <input type="checkbox" id="cb-m2-6" onchange="toggleMeal('m2-6')">
+        <label for="cb-m2-6">🍊 Fruta post comida</label>
+        <span class="meal-kcal">~60 kcal</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SUPLEMENTOS -->
+
+<div class="section" id="sec-suplementos">
+  <div class="section-title">💊 Suplementos</div>
+
+  <div class="section-title" style="font-size:1rem; color: var(--green); margin-top:0;">✅ Ya tienes</div>
+
+  <div class="card" id="card-s1">
+    <div class="card-row">
+      <button class="check-btn" onclick="toggleCard('card-s1')"></button>
+      <div class="card-content">
+        <div class="card-title">Vitamina D3</div>
+        <div class="card-sub">Testosterona, huesos, piel, inmunidad · Con comida</div>
+      </div>
+      <span class="card-badge badge-green">MAÑANA</span>
+    </div>
+  </div>
+
+  <div class="card" id="card-s2">
+    <div class="card-row">
+      <button class="check-btn" onclick="toggleCard('card-s2')"></button>
+      <div class="card-content">
+        <div class="card-title">Boro (2 pastillas)</div>
+        <div class="card-sub">Testosterona libre +30%, reduce SHBG · Con comida</div>
+      </div>
+      <span class="card-badge badge-green">MAÑANA</span>
+    </div>
+  </div>
+
+  <div class="card" id="card-s3">
+    <div class="card-row">
+      <button class="check-btn" onclick="toggleCard('card-s3')"></button>
+      <div class="card-content">
+        <div class="card-title">Magnesio glicinato</div>
+        <div class="card-sub">Sueño profundo, cortisol, testosterona · Antes de dormir</div>
+      </div>
+      <span class="card-badge badge-blue">NOCHE</span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="section-title" style="font-size:1rem; color: var(--accent); margin-top:0;">🛒 Agregar pronto</div>
+
+  <div class="card" id="card-s4">
+    <div class="card-row">
+      <button class="check-btn" onclick="toggleCard('card-s4')"></button>
+      <div class="card-content">
+        <div class="card-title">Vitamina K2 (MK-7)</div>
+        <div class="card-sub">Obligatoria con D3 · 100-200mcg · Con comida</div>
+      </div>
+      <span class="card-badge badge-red">PRIORITARIO</span>
+    </div>
+  </div>
+
+  <div class="card" id="card-s5">
+    <div class="card-row">
+      <button class="check-btn" onclick="toggleCard('card-s5')"></button>
+      <div class="card-content">
+        <div class="card-title">Colágeno hidrolizado</div>
+        <div class="card-sub">Piel, articulaciones · 10-15g · Con vitamina C</div>
+      </div>
+      <span class="card-badge badge-yellow">MEDIA</span>
+    </div>
+  </div>
+
+  <div class="card" id="card-s6">
+    <div class="card-row">
+      <button class="check-btn" onclick="toggleCard('card-s6')"></button>
+      <div class="card-content">
+        <div class="card-title">Vitamina C 500mg</div>
+        <div class="card-sub">Potencia colágeno x3 · O limón/naranja natural</div>
+      </div>
+      <span class="card-badge badge-yellow">MEDIA</span>
+    </div>
+  </div>
+
+  <div class="card" id="card-s7">
+    <div class="card-row">
+      <button class="check-btn" onclick="toggleCard('card-s7')"></button>
+      <div class="card-content">
+        <div class="card-title">Astaxantina 4-12mg</div>
+        <div class="card-sub">Antioxidante más potente, protege piel del tabaco y sol</div>
+      </div>
+      <span class="card-badge badge-yellow">MEDIA</span>
+    </div>
+  </div>
+</div>
+
+<!-- SKINCARE -->
+
+<div class="section" id="sec-skincare">
+  <div class="section-title">✨ Skincare</div>
+
+  <div class="section-title" style="font-size:1rem; color: var(--accent2); margin-top:0;">☀️ Mañana</div>
+
+  <div class="card" id="card-sk1">
+    <div class="card-row">
+      <button class="check-btn" onclick="toggleCard('card-sk1')"></button>
+      <div class="card-content">
+        <div class="card-title">Limpieza facial</div>
+        <div class="card-sub">Base limpia para el día</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="card-sk2">
+    <div class="card-row">
+      <button class="check-btn" onclick="toggleCard('card-sk2')"></button>
+      <div class="card-content">
+        <div class="card-title">Sérum 98 Minerals</div>
+        <div class="card-sub">Minerales y nutrición · Después de limpiar</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="card-sk3">
+    <div class="card-row">
+      <button class="check-btn" onclick="toggleCard('card-sk3')"></button>
+      <div class="card-content">
+        <div class="card-title">Mesoestetic Hydra Vital Light</div>
+        <div class="card-sub">Hidratación profunda · Después del sérum</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="card-sk4">
+    <div class="card-row">
+      <button class="check-btn" onclick="toggleCard('card-sk4')"></button>
+      <div class="card-content">
+        <div class="card-title">Bloqueador Kiehl's SPF</div>
+        <div class="card-sub">🔴 El más importante — TODOS los días sin excepción</div>
+      </div>
+      <span class="card-badge badge-red">OBLIGATORIO</span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="section-title" style="font-size:1rem; color: #a29bfe; margin-top:0;">🌙 Noche</div>
+
+  <div class="card" id="card-sk5">
+    <div class="card-row">
+      <button class="check-btn" onclick="toggleCard('card-sk5')"></button>
+      <div class="card-content">
+        <div class="card-title">Limpieza facial</div>
+        <div class="card-sub">Remover suciedad y contaminación del día</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="card-sk6">
+    <div class="card-row">
+      <button class="check-btn" onclick="toggleCard('card-sk6')"></button>
+      <div class="card-content">
+        <div class="card-title">Sérum 98 Minerals</div>
+        <div class="card-sub">Nutrición nocturna</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="card-sk7">
+    <div class="card-row">
+      <button class="check-btn" onclick="toggleCard('card-sk7')"></button>
+      <div class="card-content">
+        <div class="card-title">Mesoestetic Retinal Complex 0.1%</div>
+        <div class="card-sub">🛒 Agregar — renueva células, anti-aging · SOLO DE NOCHE</div>
+      </div>
+      <span class="card-badge badge-red">AGREGAR</span>
+    </div>
+  </div>
+
+  <div class="card" id="card-sk8">
+    <div class="card-row">
+      <button class="check-btn" onclick="toggleCard('card-sk8')"></button>
+      <div class="card-content">
+        <div class="card-title">Mesoestetic Hydra Vital Light</div>
+        <div class="card-sub">Hidratación y sellado nocturno</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HIDRATACION -->
+
+<div class="section" id="sec-hidratacion">
+  <div class="section-title">💧 Hidratación</div>
+
+  <div class="water-section">
+    <div class="water-title">
+      <span>Stanleys de agua hoy</span>
+      <span class="water-count"><span id="waterCount">0</span> / 4</span>
+    </div>
+    <div class="water-glasses" id="waterGlasses"></div>
+  </div>
+
+  <div class="card" id="card-h1">
+    <div class="card-row">
+      <button class="check-btn" onclick="toggleCard('card-h1')"></button>
+      <div class="card-content">
+        <div class="card-title">Bebida matutina electrolitos</div>
+        <div class="card-sub">Agua mineral + limón amarillo + sal de mar + hielo · En ayunas</div>
+      </div>
+      <span class="card-badge badge-blue">MAÑANA</span>
+    </div>
+  </div>
+
+  <div class="card" id="card-h2">
+    <div class="card-row">
+      <button class="check-btn" onclick="toggleCard('card-h2')"></button>
+      <div class="card-content">
+        <div class="card-title">Café negro</div>
+        <div class="card-sub">Sin azúcar · No interrumpe el ayuno · Potasio y antioxidantes</div>
+      </div>
+      <span class="card-badge badge-yellow">AYUNO</span>
+    </div>
+  </div>
+
+  <div class="card" id="card-h3">
+    <div class="card-row">
+      <button class="check-btn" onclick="toggleCard('card-h3')"></button>
+      <div class="card-content">
+        <div class="card-title">Agua durante ejercicio</div>
+        <div class="card-sub">500ml - 1 litro durante el entrenamiento</div>
+      </div>
+      <span class="card-badge badge-green">GYM</span>
+    </div>
+  </div>
+</div>
+
+<!-- NOTAS -->
+
+<div class="section" id="sec-notas">
+  <div class="section-title">📝 Notas del día</div>
+
+  <div class="streak-box">
+    <div class="streak-num" id="streakNum">0</div>
+    <div class="streak-label">🔥 días seguidos sin alcohol</div>
+    <div style="display:flex; gap:8px; justify-content:center; margin-top:12px;">
+      <button onclick="changeStreak(-1)" style="background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:6px 16px; border-radius:8px; cursor:pointer; font-family:'DM Sans',sans-serif;">−</button>
+      <button onclick="changeStreak(1)" style="background:var(--accent); border:none; color:white; padding:6px 16px; border-radius:8px; cursor:pointer; font-family:'DM Sans',sans-serif;">+ Día</button>
+    </div>
+  </div>
+
+  <div class="notes-area">
+    <div style="font-weight:600; font-size:0.9rem;">📌 Recordatorios clave</div>
+    <div style="font-size:0.8rem; color:var(--muted); margin-top:8px; line-height:1.8;">
+      🥩 Si tienes hambre → más carne y huevos, nunca pan<br>
+      🧴 Ducharte máximo 30 min post-gym<br>
+      🚫 Alcohol: máximo 3-4 tragos, destilados<br>
+      💨 FÜM sobre IQOS siempre que puedas<br>
+      🍊 Limón o naranja diario para vitamina C
+    </div>
+  </div>
+
+  <div class="notes-area">
+    <div style="font-weight:600; font-size:0.9rem;">🛒 Lista Costco — Dieta Animal-Based</div>
+    <div style="font-size:0.78rem; color:var(--muted); margin-top:8px; line-height:2;">
+      <span style="color:var(--accent2); font-weight:600;">🥩 Proteínas</span><br>
+      ☐ Carne molida (paquete grande)<br>
+      ☐ Ribeye o arrachera<br>
+      ☐ Pollo muslo con piel<br>
+      ☐ Salmón congelado<br>
+      ☐ Atún en agua Kirkland<br>
+      ☐ Sardinas en aceite de oliva Kirkland<br>
+      ☐ Camarones congelados<br>
+      ☐ Huevos orgánicos (caja grande)<br>
+      ☐ Jamón ibérico de bellota<br><br>
+      <span style="color:var(--accent2); font-weight:600;">🧀 Lácteos</span><br>
+      ☐ Queso menonita<br>
+      ☐ Mantequilla sin sal Kirkland<br>
+      ☐ Ghee<br><br>
+      <span style="color:var(--accent2); font-weight:600;">🍠 Carbohidratos limpios</span><br>
+      ☐ Papa cambray (bolsa grande)<br>
+      ☐ Camote<br>
+      ☐ Plátanos dominicos<br>
+      ☐ Mango<br><br>
+      <span style="color:var(--accent2); font-weight:600;">🥑 Frescos</span><br>
+      ☐ Aguacate (bolsa)<br>
+      ☐ Limones amarillos<br>
+      ☐ Naranjas<br>
+      ☐ Uvas<br><br>
+      <span style="color:var(--accent2); font-weight:600;">🥜 Snacks</span><br>
+      ☐ Nuez de Castilla natural Kirkland<br>
+      ☐ Chicharrón natural<br><br>
+      <span style="color:var(--accent2); font-weight:600;">💧 Bebidas</span><br>
+      ☐ Agua mineral Kirkland (caja)<br>
+      ☐ Agua gasificada sabor limón<br>
+      ☐ Caldo de pollo orgánico Kirkland<br>
+      ☐ Café Kirkland<br><br>
+      <span style="color:var(--accent2); font-weight:600;">🧂 Básicos</span><br>
+      ☐ Sal de mar<br>
+      ☐ Ajo picado Kirkland<br>
+      ☐ Aceite de oliva extra virgen
+    </div>
+  </div>
+
+  <div class="notes-area">
+    <div style="font-weight:600; font-size:0.9rem;">✏️ Notas personales</div>
+    <textarea id="personalNotes" placeholder="¿Cómo te sientes hoy? ¿Algo que quieras recordar?"></textarea>
+  </div>
+</div>
+
+<!-- TIMER -->
+
+<div class="section" id="sec-timer">
+  <div class="section-title">🪢 HIIT Cuerda</div>
+
+  <div class="t-win" id="tWin">
+    <div style="font-size:3rem">🔥</div>
+    <div class="t-win-title">¡LO LOGRASTE!</div>
+    <div class="t-win-sub" id="tWinSub"></div>
+    <button class="t-win-btn" onclick="tReset()">Otra ronda 💪</button>
+  </div>
+
+  <div class="t-card">
+    <div class="t-phase" id="tPhase" style="color:var(--muted)">LISTO</div>
+    <div class="t-circle-wrap">
+      <svg class="t-svg" viewBox="0 0 200 200">
+        <circle class="t-track" cx="100" cy="100" r="86"/>
+        <circle class="t-prog" id="tProg" cx="100" cy="100" r="86" stroke-dasharray="540" stroke-dashoffset="0" stroke="#e8512a"/>
+      </svg>
+      <div class="t-inner">
+        <div class="t-secs" id="tSecs" style="color:#e8512a">40</div>
+        <div class="t-unit">seg</div>
+      </div>
+    </div>
+    <div class="t-round">RONDA <b id="tRound">1</b> / <b id="tTot">10</b></div>
+    <div class="t-dots" id="tDots"></div>
+    <div class="t-controls">
+      <button class="t-sec" onclick="tReset()">↺</button>
+      <button class="t-main" id="tBtn" onclick="tToggle()" style="background:#e8512a">▶</button>
+      <button class="t-sec" onclick="tSkip()">⏭</button>
+    </div>
+    <div class="t-settings" id="tCfgPanel">
+      <div class="t-set">
+        <div class="t-slbl">Trabajo</div>
+        <div class="t-srow">
+          <button class="t-sbtn" onclick="tAdj('w',-5)">−</button>
+          <div class="t-snum" id="tW">40</div>
+          <button class="t-sbtn" onclick="tAdj('w',5)">+</button>
+        </div>
+      </div>
+      <div class="t-set">
+        <div class="t-slbl">Descanso</div>
+        <div class="t-srow">
+          <button class="t-sbtn" onclick="tAdj('r',-5)">−</button>
+          <div class="t-snum" id="tR">20</div>
+          <button class="t-sbtn" onclick="tAdj('r',5)">+</button>
+        </div>
+      </div>
+      <div class="t-set">
+        <div class="t-slbl">Rondas</div>
+        <div class="t-srow">
+          <button class="t-sbtn" onclick="tAdj('n',-1)">−</button>
+          <div class="t-snum" id="tN">10</div>
+          <button class="t-sbtn" onclick="tAdj('n',1)">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // State
+  let state = JSON.parse(localStorage.getItem('rutinaState') || '{}');
+
+  // Init date
+  const now = new Date();
+  const days = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  document.getElementById('dateLabel').textContent = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+
+  // Check if new day
+  const today = now.toDateString();
+  if (state.lastDate && state.lastDate !== today) {
+    const streak = state.streak || 0;
+    state = { lastDate: today, streak };
+    saveState();
+  } else if (!state.lastDate) {
+    state.lastDate = today;
+    saveState();
+  }
+
+  function saveState() {
+    localStorage.setItem('rutinaState', JSON.stringify(state));
+  }
+
+  // TABS
+  function switchTab(tab, el) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('sec-' + tab).classList.add('active');
+    el.classList.add('active');
+  }
+
+  // CARDS
+  function toggleCard(id) {
+    const card = document.getElementById(id);
+    const isCompleted = card.classList.toggle('completed');
+    const btn = card.querySelector('.check-btn');
+    btn.textContent = isCompleted ? '✓' : '';
+    state[id] = isCompleted;
+    saveState();
+    updateProgress();
+  }
+
+  // MEAL ITEMS
+  function toggleMeal(id) {
+    const item = document.getElementById(id);
+    const cb = item.querySelector('input[type="checkbox"]');
+    item.classList.toggle('checked', cb.checked);
+    state[id] = cb.checked;
+    saveState();
+    updateProgress();
+  }
+
+  // WATER
+  function initWater() {
+    const container = document.getElementById('waterGlasses');
+    container.innerHTML = '';
+    const count = state.water || 0;
+    for (let i = 0; i < 4; i++) {
+      const g = document.createElement('button');
+      g.className = 'glass' + (i < count ? ' filled' : '');
+      g.textContent = i < count ? '💧' : '🫙';
+      g.onclick = () => toggleWater(i);
+      container.appendChild(g);
+    }
+    document.getElementById('waterCount').textContent = count;
+  }
+
+  function toggleWater(i) {
+    const current = state.water || 0;
+    state.water = i < current ? i : i + 1;
+    saveState();
+    initWater();
+    updateProgress();
+  }
+
+  // STREAK
+  function changeStreak(delta) {
+    state.streak = Math.max(0, (state.streak || 0) + delta);
+    saveState();
+    document.getElementById('streakNum').textContent = state.streak;
+  }
+
+  // PROGRESS
+  function updateProgress() {
+    const allCards = document.querySelectorAll('.card[id]');
+    const mealItems = document.querySelectorAll('.meal-item[id]');
+    let total = allCards.length + mealItems.length + 1; // +1 for water
+    let done = 0;
+
+    allCards.forEach(c => { if (c.classList.contains('completed')) done++; });
+    mealItems.forEach(m => { if (m.classList.contains('checked')) done++; });
+    if ((state.water || 0) >= 3) done++;
+
+    const pct = Math.round((done / total) * 100);
+    document.getElementById('progressBar').style.width = pct + '%';
+    document.getElementById('progressLabel').textContent = pct + '%';
+  }
+
+  // RESET
+  function resetDay() {
+    if (!confirm('¿Resetear el día? Solo se borran los checks de hoy.')) return;
+    const streak = state.streak || 0;
+    state = { lastDate: today, streak };
+    saveState();
+    location.reload();
+  }
+
+  // RESTORE STATE
+  function restoreState() {
+    // Cards
+    document.querySelectorAll('.card[id]').forEach(card => {
+      if (state[card.id]) {
+        card.classList.add('completed');
+        card.querySelector('.check-btn').textContent = '✓';
+      }
+    });
+
+    // Meal items
+    document.querySelectorAll('.meal-item[id]').forEach(item => {
+      if (state[item.id]) {
+        item.classList.add('checked');
+        item.querySelector('input[type="checkbox"]').checked = true;
+      }
+    });
+
+    // Notes
+    const notes = document.getElementById('personalNotes');
+    if (state.notes) notes.value = state.notes;
+    notes.addEventListener('input', () => {
+      state.notes = notes.value;
+      saveState();
+    });
+
+    // Streak
+    document.getElementById('streakNum').textContent = state.streak || 0;
+
+    initWater();
+    updateProgress();
+  }
+
+  restoreState();
+
+  // ===== HIIT TIMER =====
+  var TC = {w:40, r:20, n:10};
+  var TS = {round:1, work:true, left:40, running:false, iv:null, total:0};
+  var TCIRC = 2*Math.PI*86;
+  var tAudio = null;
+
+  function tAC() { if(!tAudio) tAudio = new (window.AudioContext||window.webkitAudioContext)(); return tAudio; }
+  function tBeep(f,d) { try { var c=tAC(),o=c.createOscillator(),g=c.createGain(); o.connect(g); g.connect(c.destination); o.frequency.value=f; g.gain.setValueAtTime(0.3,c.currentTime); g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+d); o.start(); o.stop(c.currentTime+d); } catch(e){} }
+
+  function tRender() {
+    var col = TS.work ? '#e8512a' : '#2ecc71';
+    var idle = !TS.running && TS.round===1 && TS.work && TS.left===TC.w;
+    document.getElementById('tSecs').textContent = TS.left;
+    document.getElementById('tSecs').style.color = idle ? 'var(--muted)' : col;
+    document.getElementById('tProg').style.stroke = col;
+    document.getElementById('tProg').style.strokeDashoffset = TCIRC*(1 - TS.left/(TS.work?TC.w:TC.r));
+    document.getElementById('tRound').textContent = TS.round;
+    document.getElementById('tTot').textContent = TC.n;
+    document.getElementById('tPhase').textContent = idle ? 'LISTO' : (TS.work ? '💨 FUERTE' : '😮‍💨 DESCANSA');
+    document.getElementById('tPhase').style.color = idle ? 'var(--muted)' : col;
+    document.getElementById('tBtn').style.background = col;
+    var d = document.getElementById('tDots'); d.innerHTML='';
+    for(var i=1;i<=TC.n;i++) { var dot=document.createElement('div'); dot.className='t-dot'+(i<TS.round?' td':i===TS.round?(TS.work?' tw':' tr'):''); d.appendChild(dot); }
+  }
+
+  function tToggle() {
+    if(TS.running) { TS.running=false; clearInterval(TS.iv); document.getElementById('tBtn').textContent='▶'; }
+    else {
+      TS.running=true; document.getElementById('tBtn').textContent='⏸';
+      document.getElementById('tCfgPanel').style.opacity='0.3';
+      document.getElementById('tCfgPanel').style.pointerEvents='none';
+      if(TS.round===1&&TS.work&&TS.left===TC.w) tBeep(880,0.15);
+      TS.iv = setInterval(function(){
+        TS.total++; TS.left--;
+        if(TS.left<=3&&TS.left>0) tBeep(660,0.1);
+        if(TS.left<=0) {
+          if(TS.work) { TS.work=false; TS.left=TC.r; tBeep(440,0.3); }
+          else {
+            if(TS.round>=TC.n) { tFinish(); return; }
+            TS.round++; TS.work=true; TS.left=TC.w; tBeep(880,0.15);
+          }
+        }
+        tRender();
+
+  async function shareApp() {
+    // Try native share first (iOS Safari)
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Mi Rutina Diaria 💪',
+          text: 'Mi plan completo de gym, nutricion y salud',
+          url: window.location.href
+        });
+        return;
+      } catch(e) {}
+    }
+
+    // iOS Safari install instructions
+    if (/iphone|ipad|ipod/i.test(navigator.userAgent)) {
+      document.getElementById('installBanner').style.display = 'block';
+      document.getElementById('installBanner').scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+
+    // Fallback: copy URL
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      const btn = document.getElementById('shareBtn');
+      btn.textContent = '✅ Copiado';
+      setTimeout(() => btn.textContent = '📤 Compartir', 2000);
+    } catch(e) {
+      alert('Abre esta página en Safari, luego toca Compartir (📤) → Añadir a pantalla de inicio');
+    }
+  }
+
+      },1000);
+    }
+  }
+
+  function tSkip() { if(TS.running) TS.left=1; }
+
+  function tReset() {
+    TS.running=false; clearInterval(TS.iv); TS.round=1; TS.work=true; TS.left=TC.w; TS.total=0;
+    document.getElementById('tBtn').textContent='▶';
+    document.getElementById('tCfgPanel').style.opacity='1';
+    document.getElementById('tCfgPanel').style.pointerEvents='auto';
+    document.getElementById('tWin').classList.remove('show');
+    tRender();
+
+  async function shareApp() {
+    // Try native share first (iOS Safari)
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Mi Rutina Diaria 💪',
+          text: 'Mi plan completo de gym, nutricion y salud',
+          url: window.location.href
+        });
+        return;
+      } catch(e) {}
+    }
+
+    // iOS Safari install instructions
+    if (/iphone|ipad|ipod/i.test(navigator.userAgent)) {
+      document.getElementById('installBanner').style.display = 'block';
+      document.getElementById('installBanner').scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+
+    // Fallback: copy URL
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      const btn = document.getElementById('shareBtn');
+      btn.textContent = '✅ Copiado';
+      setTimeout(() => btn.textContent = '📤 Compartir', 2000);
+    } catch(e) {
+      alert('Abre esta página en Safari, luego toca Compartir (📤) → Añadir a pantalla de inicio');
+    }
+  }
+
+  }
+
+  function tFinish() {
+    TS.running=false; clearInterval(TS.iv);
+    tBeep(523,0.2); setTimeout(function(){tBeep(659,0.2);},220); setTimeout(function(){tBeep(784,0.4);},440);
+    var m=Math.floor(TS.total/60), s=TS.total%60;
+    document.getElementById('tWinSub').textContent = TC.n+' rondas · '+m+':'+(s<10?'0':'')+s+' min · ~'+Math.round(TC.n*(TC.w/40)*12)+' kcal 🔥';
+    document.getElementById('tWin').classList.add('show');
+  }
+
+  function tAdj(k,d) {
+    if(TS.running) return;
+    if(k==='w') TC.w=Math.max(10,TC.w+d);
+    if(k==='r') TC.r=Math.max(5,TC.r+d);
+    if(k==='n') TC.n=Math.max(1,Math.min(20,TC.n+d));
+    document.getElementById('tW').textContent=TC.w;
+    document.getElementById('tR').textContent=TC.r;
+    document.getElementById('tN').textContent=TC.n;
+    tReset();
+  }
+
+  tRender();
+
+  async function shareApp() {
+    // Try native share first (iOS Safari)
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Mi Rutina Diaria 💪',
+          text: 'Mi plan completo de gym, nutricion y salud',
+          url: window.location.href
+        });
+        return;
+      } catch(e) {}
+    }
+
+    // iOS Safari install instructions
+    if (/iphone|ipad|ipod/i.test(navigator.userAgent)) {
+      document.getElementById('installBanner').style.display = 'block';
+      document.getElementById('installBanner').scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+
+    // Fallback: copy URL
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      const btn = document.getElementById('shareBtn');
+      btn.textContent = '✅ Copiado';
+      setTimeout(() => btn.textContent = '📤 Compartir', 2000);
+    } catch(e) {
+      alert('Abre esta página en Safari, luego toca Compartir (📤) → Añadir a pantalla de inicio');
+    }
+  }
+
+
+</script>
+
+<!-- GYM -->
+
+<div class="section" id="sec-gym">
+  <div class="section-title">🏋️ Rutina Semanal</div>
+
+  <!-- DAY SELECTOR -->
+
+  <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px;">
+    <button class="gym-day-btn active" onclick="showDay('lunes', this)">LUN</button>
+    <button class="gym-day-btn" onclick="showDay('martes', this)">MAR</button>
+    <button class="gym-day-btn" onclick="showDay('miercoles', this)">MIE</button>
+    <button class="gym-day-btn" onclick="showDay('jueves', this)">JUE</button>
+    <button class="gym-day-btn" onclick="showDay('viernes', this)">VIE</button>
+    <button class="gym-day-btn" onclick="showDay('sabado', this)">SAB</button>
+    <button class="gym-day-btn" onclick="showDay('domingo', this)">DOM</button>
+  </div>
+
+  <!-- LUNES -->
+
+  <div class="gym-day active" id="gym-lunes">
+    <div class="gym-day-title">💪 LUNES — Pecho + Hombros + Brazos</div>
+    <div class="gym-block-title">🏋️ Pecho</div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Plate Weighted Wide Grip Pull Up</div>
+      <div class="gym-ex-detail">2 x 6-8 reps hasta fallo · 3 min descanso</div>
+    </div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Dumbbell Incline Bench Press</div>
+      <div class="gym-ex-detail">3 x 8-10 reps · 3 min descanso</div>
+    </div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Machine Incline Chest Press</div>
+      <div class="gym-ex-detail">2 x 12-15 reps · 2 min descanso</div>
+    </div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Cable Chest Flies</div>
+      <div class="gym-ex-detail">3 x 10-12 reps · 90 seg descanso</div>
+    </div>
+    <div class="gym-block-title">🏋️ Hombros — Superset x3</div>
+    <div class="gym-ex gym-superset">
+      <div class="gym-ex-name">Smith Machine Shoulder Press</div>
+      <div class="gym-ex-detail">10-12 reps → sin descanso</div>
+    </div>
+    <div class="gym-ex gym-superset">
+      <div class="gym-ex-name">Dumbbell Lateral Raise</div>
+      <div class="gym-ex-detail">12-15 reps → 2 min descanso → repetir</div>
+    </div>
+    <div class="gym-block-title">💪 Brazos — Superset x3</div>
+    <div class="gym-ex gym-superset">
+      <div class="gym-ex-name">Barbell Bicep Curl</div>
+      <div class="gym-ex-detail">15-20 reps · Eccentrico 3 seg → sin descanso</div>
+    </div>
+    <div class="gym-ex gym-superset">
+      <div class="gym-ex-name">Cable Rope Tricep Extension</div>
+      <div class="gym-ex-detail">15-20 reps → sin descanso</div>
+    </div>
+    <div class="gym-ex gym-superset">
+      <div class="gym-ex-name">Diamond Push Up</div>
+      <div class="gym-ex-detail">10 reps o fallo → 2 min descanso → repetir</div>
+    </div>
+    <div class="gym-cardio">🏃 Cardio final: 15 min escaladora</div>
+  </div>
+
+  <!-- MARTES -->
+
+  <div class="gym-day" id="gym-martes">
+    <div class="gym-day-title">🔥 MARTES — Lagree</div>
+    <div class="gym-block-title">🔥 Lagree</div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Clase de Lagree</div>
+      <div class="gym-ex-detail">45-50 minutos · Megaformer · Cuerpo completo</div>
+    </div>
+    <div class="gym-block-title">💡 Recuerda</div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Movimientos lentos e isométricos</div>
+      <div class="gym-ex-detail">La lentitud es la intensidad — no aceleres</div>
+    </div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Core activo todo el tiempo</div>
+      <div class="gym-ex-detail">Mantén el abdomen contraído durante toda la clase</div>
+    </div>
+    <div class="gym-cardio">✅ Lagree ya es cardio + fuerza — no necesitas más hoy</div>
+  </div>
+
+  <!-- MIERCOLES -->
+
+  <div class="gym-day" id="gym-miercoles">
+    <div class="gym-day-title">🚶 MIERCOLES — Descanso Activo</div>
+    <div class="gym-block-title">💧 Cardio</div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Opcion 1 — HIIT Cuerda + Caminata</div>
+      <div class="gym-ex-detail">10 min HIIT + 25 min caminata = 35 min total</div>
+    </div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Opcion 2 — Funcional</div>
+      <div class="gym-ex-detail">45-50 min si hay clase disponible</div>
+    </div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Opcion 3 — Descanso total</div>
+      <div class="gym-ex-detail">El cuerpo también necesita recuperarse</div>
+    </div>
+    <div class="gym-cardio">✅ No gym hoy — recuperacion activa</div>
+  </div>
+
+  <!-- JUEVES -->
+
+  <div class="gym-day" id="gym-jueves">
+    <div class="gym-day-title">💪 JUEVES — Espalda + Tríceps + Abdomen</div>
+    <div class="gym-block-title">🏋️ Espalda</div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Machine Assisted Parallel Grip Pull Up</div>
+      <div class="gym-ex-detail">2 series hasta fallo · 2 min descanso</div>
+    </div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Barbell Bent Over Row</div>
+      <div class="gym-ex-detail">3 x 10-12 reps · 3 min descanso · Espalda recta</div>
+    </div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Lat Machine Wide Grip Row</div>
+      <div class="gym-ex-detail">3 x 12-15 reps · Hold squeeze 2 seg · 2 min descanso</div>
+    </div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Machine Seated Neutral Grip Row</div>
+      <div class="gym-ex-detail">3 x 10-12 reps · 2 min descanso</div>
+    </div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Lat Pull Throughs</div>
+      <div class="gym-ex-detail">2 x 15-20 reps · 2 min descanso</div>
+    </div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Back Extension con mancuerna</div>
+      <div class="gym-ex-detail">2 x 12-15 reps · 90 seg descanso</div>
+    </div>
+    <div class="gym-block-title">💪 Triceps</div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Barbell Skullcrusher</div>
+      <div class="gym-ex-detail">3 x 10-12 reps · 2 min descanso</div>
+    </div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Cable Straight Bar Tricep Pushdown</div>
+      <div class="gym-ex-detail">2 x 15-20 reps · 90 seg descanso</div>
+    </div>
+    <div class="gym-block-title">🔲 Abdomen</div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Hanging Leg Raises</div>
+      <div class="gym-ex-detail">2 series hasta fallo · 2 min descanso</div>
+    </div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Ab Roller Roll Out</div>
+      <div class="gym-ex-detail">2 x 12 reps · 90 seg descanso</div>
+    </div>
+    <div class="gym-cardio">🏃 Cardio final: 15 min escaladora</div>
+  </div>
+
+  <!-- VIERNES -->
+
+  <div class="gym-day" id="gym-viernes">
+    <div class="gym-day-title">💪 VIERNES — Piernas + Abdomen</div>
+    <div class="gym-block-title">🦵 Piernas</div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Bulgarian Split Squat</div>
+      <div class="gym-ex-detail">3 x 6-8 cada pierna · 2 min descanso</div>
+    </div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Hip Thrust</div>
+      <div class="gym-ex-detail">2 x 10-12 reps · 2 min descanso</div>
+    </div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Leg Extensions</div>
+      <div class="gym-ex-detail">2 x 15-20 reps · Hold squeeze 2 seg</div>
+    </div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Leg Curl Machine</div>
+      <div class="gym-ex-detail">3 x 12-15 reps · Eccentrico 3 seg</div>
+    </div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Calf Raises</div>
+      <div class="gym-ex-detail">3 x 15-20 reps · Eccentrico 3 seg</div>
+    </div>
+    <div class="gym-block-title">🔲 Abdomen</div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Hanging Leg Raises</div>
+      <div class="gym-ex-detail">3 series hasta fallo · 2 min descanso</div>
+    </div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Ab Roller Roll Out</div>
+      <div class="gym-ex-detail">2 x 12 reps · 90 seg descanso</div>
+    </div>
+    <div class="gym-cardio">🏃 Cardio final: 20 min escaladora</div>
+  </div>
+
+  <!-- SABADO -->
+
+  <div class="gym-day" id="gym-sabado">
+    <div class="gym-day-title">😴 SABADO — Descanso o Funcional</div>
+    <div class="gym-block-title">🌅 MAÑANA</div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Caminata ligera</div>
+      <div class="gym-ex-detail">30-40 minutos relajado</div>
+    </div>
+    <div class="gym-block-title">💧 Opciones</div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Funcional si hay clase</div>
+      <div class="gym-ex-detail">45-50 minutos</div>
+    </div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Descanso completo</div>
+      <div class="gym-ex-detail">El cuerpo se construye mientras descansas</div>
+    </div>
+    <div class="gym-cardio">✅ Dia de descanso — disfruta y recuperate</div>
+  </div>
+
+  <!-- DOMINGO -->
+
+  <div class="gym-day" id="gym-domingo">
+    <div class="gym-day-title">😴 DOMINGO — Descanso Total</div>
+    <div class="gym-block-title">🛌 Hoy descansas</div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Descanso completo</div>
+      <div class="gym-ex-detail">El cuerpo se construye mientras descansas 💪</div>
+    </div>
+    <div class="gym-ex">
+      <div class="gym-ex-name">Hidratacion y nutricion</div>
+      <div class="gym-ex-detail">Mantén tus 2 comidas y electrolitos</div>
+    </div>
+    <div class="gym-cardio">✅ Sin ejercicio hoy — mereces el descanso</div>
+  </div>
+
+</div>
+
+<!-- GRANOS -->
+
+<div class="section" id="sec-granos">
+  <div class="section-title">🧴 Rutina Anti-Granos</div>
+
+  <div class="granos-warning">
+    ⚠️ La causa principal es ducharte tarde post-gym. Ducharte máximo 30 min después del ejercicio es el cambio más importante.
+  </div>
+
+  <div class="card" style="margin-bottom:14px;">
+    <div style="font-family:'Bebas Neue',sans-serif; font-size:1.1rem; color:var(--accent2); margin-bottom:12px; letter-spacing:1px;">☀️ RUTINA DE DUCHA POST-GYM</div>
+
+```
+<div class="granos-step">
+  <div class="granos-step-num">1</div>
+  <div class="granos-step-content">
+    <div class="granos-step-title">Ducharte máximo 30 min post-gym</div>
+    <div class="granos-step-sub">No esperes más. El sudor + calor + fricción tapa folículos y genera bacterias.</div>
+  </div>
+</div>
+
+<div class="granos-step">
+  <div class="granos-step-num">2</div>
+  <div class="granos-step-content">
+    <div class="granos-step-title">Agua tibia para abrir poros</div>
+    <div class="granos-step-sub">Mójate bien antes de aplicar el jabón.</div>
+  </div>
+</div>
+
+<div class="granos-step">
+  <div class="granos-step-num">3</div>
+  <div class="granos-step-content">
+    <div class="granos-step-title">CeraVe SA Body Wash en nalgas y piernas</div>
+    <div class="granos-step-sub">Aplica generosamente en las zonas afectadas.</div>
+  </div>
+</div>
+
+<div class="granos-step">
+  <div class="granos-step-num">4</div>
+  <div class="granos-step-content">
+    <div class="granos-step-title">Esponja exfoliante en círculos suaves</div>
+    <div class="granos-step-sub">Frotar suavemente, no agresivo. Destapa folículos tapados.</div>
+  </div>
+</div>
+
+<div class="granos-step">
+  <div class="granos-step-num">5</div>
+  <div class="granos-step-content">
+    <div class="granos-step-title">Dejar actuar 1-2 minutos</div>
+    <div class="granos-step-sub">No enjuagar inmediatamente, deja que el ácido salicílico actúe.</div>
+  </div>
+</div>
+
+<div class="granos-step">
+  <div class="granos-step-num">6</div>
+  <div class="granos-step-content">
+    <div class="granos-step-title">Agua fría al final</div>
+    <div class="granos-step-sub">Cierra los poros y reduce inflamación.</div>
+  </div>
+</div>
+```
+
+  </div>
+
+  <div class="card" style="margin-bottom:14px;">
+    <div style="font-family:'Bebas Neue',sans-serif; font-size:1.1rem; color:var(--accent2); margin-bottom:12px; letter-spacing:1px;">✅ LO QUE SÍ HACER</div>
+    <div class="granos-tip">✅ Ropa holgada y transpirable en el gym</div>
+    <div class="granos-tip">✅ Cambiate de ropa sudada inmediatamente</div>
+    <div class="granos-tip">✅ Consistencia — 2-3 semanas para ver mejora</div>
+    <div class="granos-tip">✅ Reducir IQOS mejora circulación en piel</div>
+  </div>
+
+  <div class="card">
+    <div style="font-family:'Bebas Neue',sans-serif; font-size:1.1rem; color:#ff6b6b; margin-bottom:12px; letter-spacing:1px;">❌ LO QUE NO HACER</div>
+    <div class="granos-warning">❌ No revientes los granitos</div>
+    <div class="granos-warning">❌ No uses ropa muy ajustada de nylon</div>
+    <div class="granos-warning">❌ No te quedes con ropa húmeda más de 30 min</div>
+    <div class="granos-warning">❌ No uses jabones con fragancias fuertes</div>
+  </div>
+
+</div>
+
+<div id="installBanner" style="display:none; position:fixed; bottom:90px; left:16px; right:16px; background:#1a1a1a; border:1px solid #e8512a; border-radius:14px; padding:14px 16px; z-index:200; box-shadow:0 4px 20px rgba(0,0,0,0.5);">
+  <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+    <div>
+      <div style="font-family:'Bebas Neue',sans-serif; font-size:1.1rem; color:#e8512a; letter-spacing:1px;">💪 AGREGAR A INICIO</div>
+      <div style="font-size:0.78rem; color:#888; margin-top:4px; line-height:1.5;">Toca <strong style="color:white;">Compartir</strong> (📤) y luego<br><strong style="color:white;">"Añadir a pantalla de inicio"</strong></div>
+    </div>
+    <button onclick="document.getElementById('installBanner').style.display='none'; localStorage.setItem('bannerDismissed','1')" style="background:transparent; border:none; color:#888; font-size:1.2rem; cursor:pointer; padding:0 0 0 10px;">✕</button>
+  </div>
+</div>
+<script>
+  // Show install banner on iOS Safari
+  function isIOS() { return /iphone|ipad|ipod/i.test(navigator.userAgent); }
+  function isInStandaloneMode() { return window.navigator.standalone === true; }
+  window.addEventListener('load', function() {
+    if (isIOS() && !isInStandaloneMode() && !localStorage.getItem('bannerDismissed')) {
+      setTimeout(function() {
+        document.getElementById('installBanner').style.display = 'block';
+      }, 2000);
+    }
+  });
+</script>
+
+</body>
+</html>
