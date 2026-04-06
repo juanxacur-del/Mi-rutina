@@ -542,6 +542,47 @@ color: var(–green);
 
 /* INSTALL BANNER */
 #installBanner { font-family: ‘Outfit’, sans-serif !important; }
+
+.grocery-cat {
+font-size: 0.68rem;
+font-weight: 600;
+text-transform: uppercase;
+letter-spacing: 1.5px;
+color: #aaaaaa;
+margin: 14px 0 6px;
+}
+.grocery-item {
+display: flex;
+align-items: center;
+gap: 10px;
+padding: 10px 12px;
+background: #111111;
+border: 1px solid #2a2a2a;
+border-radius: 10px;
+margin-bottom: 5px;
+cursor: pointer;
+transition: all 0.2s;
+-webkit-tap-highlight-color: transparent;
+}
+.grocery-item:active { transform: scale(0.98); }
+.grocery-item.got { background: #0a1a0f; border-color: rgba(74,222,128,0.3); }
+.gi-check { font-size: 1rem; flex-shrink: 0; transition: all 0.2s; }
+.grocery-item.got .gi-check { color: #4ade80; }
+.gi-text { font-size: 0.82rem; font-weight: 400; transition: all 0.2s; }
+.grocery-item.got .gi-text { text-decoration: line-through; color: #555; }
+.grocery-reset-wrap { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+.grocery-reset-btn {
+background: transparent;
+border: 1px solid #2a2a2a;
+color: #666;
+padding: 5px 12px;
+border-radius: 100px;
+font-size: 0.7rem;
+cursor: pointer;
+font-family: ‘Outfit’, sans-serif;
+transition: all 0.2s;
+}
+.grocery-reset-btn:hover { border-color: #555; color: #aaa; }
 </style>
 
 </head>
@@ -999,44 +1040,59 @@ color: var(–green);
 
   <div class="notes-area">
     <div style="font-weight:600; font-size:0.9rem;">🛒 Lista Costco — Dieta Animal-Based</div>
-    <div style="font-size:0.78rem; color:var(--muted); margin-top:8px; line-height:2;">
-      <span style="color:var(--accent2); font-weight:600;">🥩 Proteínas</span><br>
-      ☐ Carne molida (paquete grande)<br>
-      ☐ Ribeye o arrachera<br>
-      ☐ Pollo muslo con piel<br>
-      ☐ Salmón congelado<br>
-      ☐ Atún en agua Kirkland<br>
-      ☐ Sardinas en aceite de oliva Kirkland<br>
-      ☐ Camarones congelados<br>
-      ☐ Huevos orgánicos (caja grande)<br>
-      ☐ Jamón ibérico de bellota<br><br>
-      <span style="color:var(--accent2); font-weight:600;">🧀 Lácteos</span><br>
-      ☐ Queso menonita<br>
-      ☐ Mantequilla sin sal Kirkland<br>
-      ☐ Ghee<br><br>
-      <span style="color:var(--accent2); font-weight:600;">🍠 Carbohidratos limpios</span><br>
-      ☐ Papa cambray (bolsa grande)<br>
-      ☐ Camote<br>
-      ☐ Plátanos dominicos<br>
-      ☐ Mango<br><br>
-      <span style="color:var(--accent2); font-weight:600;">🥑 Frescos</span><br>
-      ☐ Aguacate (bolsa)<br>
-      ☐ Limones amarillos<br>
-      ☐ Naranjas<br>
-      ☐ Uvas<br><br>
-      <span style="color:var(--accent2); font-weight:600;">🥜 Snacks</span><br>
-      ☐ Nuez de Castilla natural Kirkland<br>
-      ☐ Chicharrón natural<br><br>
-      <span style="color:var(--accent2); font-weight:600;">💧 Bebidas</span><br>
-      ☐ Agua mineral Kirkland (caja)<br>
-      ☐ Agua gasificada sabor limón<br>
-      ☐ Caldo de pollo orgánico Kirkland<br>
-      ☐ Café Kirkland<br><br>
-      <span style="color:var(--accent2); font-weight:600;">🧂 Básicos</span><br>
-      ☐ Sal de mar<br>
-      ☐ Ajo picado Kirkland<br>
-      ☐ Aceite de oliva extra virgen
-    </div>
+    <div style="margin-top:10px;">
+
+```
+  <div class="grocery-reset-wrap">
+    <button onclick="resetGrocery()" class="grocery-reset-btn">↺ Limpiar lista</button>
+  </div>
+
+  <div class="grocery-cat">🥩 Proteínas</div>
+  <div class="grocery-item" id="gi-1" onclick="toggleGrocery('gi-1')"><span class="gi-check">☐</span><span class="gi-text">Carne molida (paquete grande)</span></div>
+  <div class="grocery-item" id="gi-2" onclick="toggleGrocery('gi-2')"><span class="gi-check">☐</span><span class="gi-text">Ribeye o arrachera</span></div>
+  <div class="grocery-item" id="gi-3" onclick="toggleGrocery('gi-3')"><span class="gi-check">☐</span><span class="gi-text">Pollo muslo con piel</span></div>
+  <div class="grocery-item" id="gi-4" onclick="toggleGrocery('gi-4')"><span class="gi-check">☐</span><span class="gi-text">Salmón congelado</span></div>
+  <div class="grocery-item" id="gi-5" onclick="toggleGrocery('gi-5')"><span class="gi-check">☐</span><span class="gi-text">Atún en agua Kirkland</span></div>
+  <div class="grocery-item" id="gi-6" onclick="toggleGrocery('gi-6')"><span class="gi-check">☐</span><span class="gi-text">Sardinas en aceite de oliva Kirkland</span></div>
+  <div class="grocery-item" id="gi-7" onclick="toggleGrocery('gi-7')"><span class="gi-check">☐</span><span class="gi-text">Camarones congelados</span></div>
+  <div class="grocery-item" id="gi-8" onclick="toggleGrocery('gi-8')"><span class="gi-check">☐</span><span class="gi-text">Huevos orgánicos (caja grande)</span></div>
+  <div class="grocery-item" id="gi-9" onclick="toggleGrocery('gi-9')"><span class="gi-check">☐</span><span class="gi-text">Jamón ibérico de bellota</span></div>
+
+  <div class="grocery-cat">🧀 Lácteos</div>
+  <div class="grocery-item" id="gi-10" onclick="toggleGrocery('gi-10')"><span class="gi-check">☐</span><span class="gi-text">Queso menonita</span></div>
+  <div class="grocery-item" id="gi-11" onclick="toggleGrocery('gi-11')"><span class="gi-check">☐</span><span class="gi-text">Mantequilla sin sal Kirkland</span></div>
+  <div class="grocery-item" id="gi-12" onclick="toggleGrocery('gi-12')"><span class="gi-check">☐</span><span class="gi-text">Ghee</span></div>
+
+  <div class="grocery-cat">🍠 Carbohidratos limpios</div>
+  <div class="grocery-item" id="gi-13" onclick="toggleGrocery('gi-13')"><span class="gi-check">☐</span><span class="gi-text">Papa cambray (bolsa grande)</span></div>
+  <div class="grocery-item" id="gi-14" onclick="toggleGrocery('gi-14')"><span class="gi-check">☐</span><span class="gi-text">Camote</span></div>
+  <div class="grocery-item" id="gi-15" onclick="toggleGrocery('gi-15')"><span class="gi-check">☐</span><span class="gi-text">Plátanos dominicos</span></div>
+  <div class="grocery-item" id="gi-16" onclick="toggleGrocery('gi-16')"><span class="gi-check">☐</span><span class="gi-text">Mango</span></div>
+
+  <div class="grocery-cat">🥑 Frescos</div>
+  <div class="grocery-item" id="gi-17" onclick="toggleGrocery('gi-17')"><span class="gi-check">☐</span><span class="gi-text">Aguacate (bolsa)</span></div>
+  <div class="grocery-item" id="gi-18" onclick="toggleGrocery('gi-18')"><span class="gi-check">☐</span><span class="gi-text">Limones amarillos</span></div>
+  <div class="grocery-item" id="gi-19" onclick="toggleGrocery('gi-19')"><span class="gi-check">☐</span><span class="gi-text">Naranjas</span></div>
+  <div class="grocery-item" id="gi-20" onclick="toggleGrocery('gi-20')"><span class="gi-check">☐</span><span class="gi-text">Uvas</span></div>
+
+  <div class="grocery-cat">🥜 Snacks</div>
+  <div class="grocery-item" id="gi-21" onclick="toggleGrocery('gi-21')"><span class="gi-check">☐</span><span class="gi-text">Nuez de Castilla natural Kirkland</span></div>
+  <div class="grocery-item" id="gi-22" onclick="toggleGrocery('gi-22')"><span class="gi-check">☐</span><span class="gi-text">Chicharrón natural</span></div>
+
+  <div class="grocery-cat">💧 Bebidas</div>
+  <div class="grocery-item" id="gi-23" onclick="toggleGrocery('gi-23')"><span class="gi-check">☐</span><span class="gi-text">Agua mineral Kirkland (caja)</span></div>
+  <div class="grocery-item" id="gi-24" onclick="toggleGrocery('gi-24')"><span class="gi-check">☐</span><span class="gi-text">Agua gasificada sabor limón</span></div>
+  <div class="grocery-item" id="gi-25" onclick="toggleGrocery('gi-25')"><span class="gi-check">☐</span><span class="gi-text">Caldo de pollo orgánico Kirkland</span></div>
+  <div class="grocery-item" id="gi-26" onclick="toggleGrocery('gi-26')"><span class="gi-check">☐</span><span class="gi-text">Café Kirkland</span></div>
+
+  <div class="grocery-cat">🧂 Básicos</div>
+  <div class="grocery-item" id="gi-27" onclick="toggleGrocery('gi-27')"><span class="gi-check">☐</span><span class="gi-text">Sal de mar</span></div>
+  <div class="grocery-item" id="gi-28" onclick="toggleGrocery('gi-28')"><span class="gi-check">☐</span><span class="gi-text">Ajo picado Kirkland</span></div>
+  <div class="grocery-item" id="gi-29" onclick="toggleGrocery('gi-29')"><span class="gi-check">☐</span><span class="gi-text">Aceite de oliva extra virgen</span></div>
+
+</div>
+```
+
   </div>
 
   <div class="notes-area">
@@ -1247,7 +1303,42 @@ color: var(–green);
     updateProgress();
   }
 
+
+  // GROCERY LIST
+  function toggleGrocery(id) {
+    const item = document.getElementById(id);
+    const isGot = item.classList.toggle('got');
+    item.querySelector('.gi-check').textContent = isGot ? '✓' : '☐';
+    state['grocery_' + id] = isGot;
+    saveState();
+  }
+
+  function resetGrocery() {
+    for (let i = 1; i <= 29; i++) {
+      const item = document.getElementById('gi-' + i);
+      if (item) {
+        item.classList.remove('got');
+        item.querySelector('.gi-check').textContent = '☐';
+        state['grocery_gi-' + i] = false;
+      }
+    }
+    saveState();
+  }
+
+  function restoreGrocery() {
+    for (let i = 1; i <= 29; i++) {
+      if (state['grocery_gi-' + i]) {
+        const item = document.getElementById('gi-' + i);
+        if (item) {
+          item.classList.add('got');
+          item.querySelector('.gi-check').textContent = '✓';
+        }
+      }
+    }
+  }
+
   restoreState();
+  restoreGrocery();
 
   // ===== HIIT TIMER =====
   var TC = {w:40, r:20, n:10};
@@ -1738,27 +1829,4 @@ color: var(–green);
 
 </div>
 
-<div id="installBanner" style="display:none; position:fixed; bottom:90px; left:16px; right:16px; background:#1a1a1a; border:1px solid #e8512a; border-radius:14px; padding:14px 16px; z-index:200; box-shadow:0 4px 20px rgba(0,0,0,0.5);">
-  <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-    <div>
-      <div style="font-family:'Bebas Neue',sans-serif; font-size:1.1rem; color:#e8512a; letter-spacing:1px;">💪 AGREGAR A INICIO</div>
-      <div style="font-size:0.78rem; color:#888; margin-top:4px; line-height:1.5;">Toca <strong style="color:white;">Compartir</strong> (📤) y luego<br><strong style="color:white;">"Añadir a pantalla de inicio"</strong></div>
-    </div>
-    <button onclick="document.getElementById('installBanner').style.display='none'; localStorage.setItem('bannerDismissed','1')" style="background:transparent; border:none; color:#888; font-size:1.2rem; cursor:pointer; padding:0 0 0 10px;">✕</button>
-  </div>
-</div>
-<script>
-  // Show install banner on iOS Safari
-  function isIOS() { return /iphone|ipad|ipod/i.test(navigator.userAgent); }
-  function isInStandaloneMode() { return window.navigator.standalone === true; }
-  window.addEventListener('load', function() {
-    if (isIOS() && !isInStandaloneMode() && !localStorage.getItem('bannerDismissed')) {
-      setTimeout(function() {
-        document.getElementById('installBanner').style.display = 'block';
-      }, 2000);
-    }
-  });
-</script>
-
-</body>
-</html>
+<div id="installBanner" style="display:none; position:fixed; bottom:90px; left:16px; right:16px; background:#1a1a1a
